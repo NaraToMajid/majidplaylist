@@ -1,8 +1,3 @@
-// ============================================
-// DAFTAR LAGU – edit bagian ini
-// ============================================
-
-// Tentukan folder (sesuaikan dengan struktur hosting kamu)
 const SONG_DIR = 'songs/';
 const COVER_DIR = 'covers/';
 
@@ -31,5 +26,4 @@ const songs = [
     cover: "cover4.webp",
     src: "musik4.mp3"
   }
-  // HAPUS SEMUA ENTRI KOSONG!
 ];
