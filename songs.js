@@ -13,5 +13,5 @@ const songs = [
 // ============================================================
 //  Folder tempat file disimpan (ubah jika perlu)
 // ============================================================
-const COVER_DIR = "covers/";   // folder untuk gambar cover
-const SONG_DIR  = "songs/";    // folder untuk file audio
+const COVER_DIR = "/covers/";   // folder untuk gambar cover
+const SONG_DIR  = "/songs/";    // folder untuk file audio
