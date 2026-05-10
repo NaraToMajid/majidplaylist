@@ -13,18 +13,13 @@
 
 const songs = [
 
-  // Contoh lagu 1 (aktif)
   { title: "Secret Door", artist: "Arctic Monkeys", cover: "cover1.webp", src: "musik1.mp3" },
 
-  // Contoh lagu 2
   { title: "As The World Caves In", artist: "Matt Maltese", cover: "cover2.webp", src: "musik2.mp3" },
 
-  // Contoh lagu 3
   { title: "Best Friend", artist: "Rex Orange County", cover: "cover3.webp", src: "musik3.mp3" },
 
-  // Slot kosong (tidak akan tampil di playlist karena title === "")
-  { title: "Heather", artist: "Conan Gray
-", cover: "cover4.webp", src: "musik4.mp3" },
+  { title: "Heather", artist: "Conan Gray", cover: "cover4.webp", src: "musik4.mp3" },
 
   { title: "", artist: "", cover: "", src: "" },
 
