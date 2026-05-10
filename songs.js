@@ -2,6 +2,7 @@ const SONG_DIR = 'songs/';
 const COVER_DIR = 'covers/';
 
 const songs = [
+  
   {
     title: "Secret Door",
     artist: "Arctic Monkeys",
@@ -26,4 +27,5 @@ const songs = [
     cover: "cover4.webp",
     src: "musik4.mp3"
   }
+  
 ];
