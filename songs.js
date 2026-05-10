@@ -25,7 +25,7 @@ const songs = [
     title: "Heather",
     artist: "Conan Gray",
     cover: "cover4.webp",
-    src: "musik4.mp3"
+    src: "musik1.mp3"
   }
   
 ];
