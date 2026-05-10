@@ -1,15 +1,3 @@
-// ============================================================
-//  DAFTAR LAGU — edit bagian ini untuk menambahkan lagu
-//
-//  Setiap lagu memiliki 4 properti:
-//    title  : judul lagu (teks bebas)
-//    artist : nama artis (teks bebas)
-//    cover  : nama file gambar cover  → taruh di folder covers/
-//    src    : nama file audio         → taruh di folder songs/
-//
-//  Format cover yang didukung : jpg · jpeg · png · webp · avif
-//  Format audio yang didukung : mp3 · ogg · flac · wav · m4a
-// ============================================================
 
 const songs = [
 
