@@ -1,0 +1,368 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  color: #fff;
+  display: flex;
+  align-items: stretch;
+  background: #0a0c12;
+}
+
+/* Background blur dinamis */
+#bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) brightness(0.3) saturate(1.8);
+  transform: scale(1.1);
+  z-index: 0;
+  transition: background-image 0.8s ease;
+}
+
+/* Panel kiri (player) */
+.left {
+  position: relative;
+  z-index: 1;
+  width: 340px;
+  min-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 12, 18, 0.3);
+  backdrop-filter: blur(2px);
+}
+
+/* Cover album */
+.cover-wrap {
+  width: 200px;
+  height: 200px;
+}
+
+.cover-wrap img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  display: block;
+  transition: box-shadow 0.3s ease;
+}
+
+.cover-wrap img.spin {
+  animation: rot 12s linear infinite;
+}
+
+@keyframes rot {
+  to { transform: rotate(360deg); }
+}
+
+/* Info lagu */
+.meta {
+  text-align: center;
+  width: 100%;
+}
+
+.mtitle {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.martist {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+}
+
+/* Beat visualizer */
+.beats {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 36px;
+  width: 100%;
+}
+
+.beats .b {
+  width: 5px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 3px 3px 0 0;
+  height: 3px;
+  transition: height 0.07s ease-out;
+}
+
+/* Progress bar */
+.prog {
+  width: 100%;
+}
+
+.track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  width: 0%;
+  pointer-events: none;
+  transition: width 0.25s linear;
+}
+
+.times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 5px;
+}
+
+/* Tombol kontrol */
+.ctrls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.cb {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: color 0.15s, background 0.15s;
+}
+
+.cb:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cb.on {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+
+.pb {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #111;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.pb:hover {
+  opacity: 0.85;
+  transform: scale(1.06);
+}
+
+/* Volume slider */
+.vol {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.vol i {
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.vol input {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  outline: none;
+  cursor: pointer;
+}
+
+.vol input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* Panel kanan (playlist) */
+.right {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: rgba(10, 12, 18, 0.2);
+  backdrop-filter: blur(2px);
+}
+
+.plhead {
+  padding: 20px 20px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.plscroll {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.plscroll::-webkit-scrollbar { width: 5px; }
+.plscroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+/* Item playlist */
+.plitem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-left: 3px solid transparent;
+}
+
+.plitem:hover { background: rgba(255, 255, 255, 0.07); }
+
+.plitem.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: #fff;
+}
+
+.plnum {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.plitem.active .plnum { color: #fff; }
+
+.plthumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.plinfo { flex: 1; min-width: 0; }
+
+.plname {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plartist {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 3px;
+}
+
+/* Animasi denyut playlist (pulse animation untuk lagu aktif) */
+.pulse {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 15px;
+  justify-content: center;
+}
+
+.pulse span {
+  width: 3px;
+  background: #fff;
+  border-radius: 2px;
+  height: 3px;
+}
+
+.pulse.go span:nth-child(1) { animation: pa 0.7s 0.00s ease-in-out infinite; }
+.pulse.go span:nth-child(2) { animation: pa 0.7s 0.18s ease-in-out infinite; }
+.pulse.go span:nth-child(3) { animation: pa 0.7s 0.35s ease-in-out infinite; }
+
+@keyframes pa {
+  0%, 100% { height: 3px; }
+  50%       { height: 14px; }
+}
+
+/* Responsive mobile */
+@media (max-width: 600px) {
+  body {
+    flex-direction: column;
+    overflow: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .left {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 28px 20px 22px;
+  }
+
+  .cover-wrap,
+  .cover-wrap img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .right {
+    flex: none;
+    min-height: 50vh;
+  }
+}

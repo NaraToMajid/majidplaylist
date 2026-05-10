@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MajidPlaylist</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="bg"></div>
+
+<div class="left">
+  <div class="cover-wrap">
+    <img id="cov" src="" alt="cover">
+  </div>
+  <div class="meta">
+    <div class="mtitle" id="ttl">—</div>
+    <div class="martist" id="art">—</div>
+  </div>
+  <div class="beats" id="beats"></div>
+  <div class="prog">
+    <div class="track" id="trk"><div class="fill" id="fil"></div></div>
+    <div class="times"><span id="tc">0:00</span><span id="td">0:00</span></div>
+  </div>
+  <div class="ctrls">
+    <button class="cb" id="bL" title="Loop"><i class="ti ti-repeat"></i></button>
+    <button class="cb" id="bP" title="Prev"><i class="ti ti-player-skip-back"></i></button>
+    <button class="pb" id="bPl" title="Play"><i class="ti ti-player-play" id="pIco"></i></button>
+    <button class="cb" id="bN" title="Next"><i class="ti ti-player-skip-forward"></i></button>
+    <button class="cb" id="bS" title="Shuffle"><i class="ti ti-arrows-shuffle"></i></button>
+  </div>
+  <div class="vol">
+    <i class="ti ti-volume"></i>
+    <input type="range" id="vol" min="0" max="100" value="80" step="1">
+  </div>
+</div>
+
+<div class="right">
+  <div class="plhead">Playlist</div>
+  <div class="plscroll" id="pl"></div>
+</div>
+
+<script src="songs.js"></script>
+<script src="player.js"></script>
+</body>
+</html>

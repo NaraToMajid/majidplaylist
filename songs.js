@@ -1,0 +1,58 @@
+// ============================================================
+//  DAFTAR LAGU — edit bagian ini untuk menambahkan lagu
+//
+//  Setiap lagu memiliki 4 properti:
+//    title  : judul lagu (teks bebas)
+//    artist : nama artis (teks bebas)
+//    cover  : nama file gambar cover  → taruh di folder covers/
+//    src    : nama file audio         → taruh di folder songs/
+//
+//  Format cover yang didukung : jpg · jpeg · png · webp · avif
+//  Format audio yang didukung : mp3 · ogg · flac · wav · m4a
+// ============================================================
+
+const songs = [
+
+  // Contoh lagu 1 (aktif)
+  { title: "Secret Door", artist: "Arctic Monkeys", cover: "cover1.webp", src: "musik1.mp3" },
+
+  // Contoh lagu 2
+  { title: "As The World Caves In", artist: "Matt Maltese", cover: "cover2.webp", src: "musik2.mp3" },
+
+  // Contoh lagu 3
+  { title: "Best Friend", artist: "Rex Orange County", cover: "cover3.webp", src: "musik3.mp3" },
+
+  // Slot kosong (tidak akan tampil di playlist karena title === "")
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+  { title: "", artist: "", cover: "", src: "" },
+
+];
+
+// ============================================================
+//  Folder tempat file disimpan (ubah jika perlu)
+// ============================================================
+const COVER_DIR = "covers/";   // folder untuk gambar cover
+const SONG_DIR  = "songs/";    // folder untuk file audio
