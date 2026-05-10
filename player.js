@@ -1,9 +1,9 @@
 // ============================================================
-//  player.js — logika pemutar musik lengkap
+//  player.js — logika pemutar musik lengkap (FIXED)
 // ============================================================
 
 // Filter slot kosong agar tidak muncul di playlist
-const playlist = songs.filter(s => s.title.trim() !== "");
+const playlist = songs.filter(s => s.title && s.title.trim() !== "" && s.src && s.src.trim() !== "");
 
 let cur      = 0;
 let playing  = false;
@@ -33,11 +33,13 @@ const volIcon = document.getElementById('volIcon');
 // Buat bar visualizer
 const BAR_COUNT = 28;
 const bars = [];
-for (let i = 0; i < BAR_COUNT; i++) {
-  const b = document.createElement('div');
-  b.className = 'b';
-  beatsEl.appendChild(b);
-  bars.push(b);
+if (beatsEl) {
+  for (let i = 0; i < BAR_COUNT; i++) {
+    const b = document.createElement('div');
+    b.className = 'b';
+    beatsEl.appendChild(b);
+    bars.push(b);
+  }
 }
 
 // Format detik → m:ss
@@ -60,25 +62,51 @@ function updateTimeDisplay() {
 
 // Muat lagu ke player
 function load(index, autoplay) {
-  if (!playlist[index]) return;
+  if (!playlist[index]) {
+    console.error("Lagu index", index, "tidak ditemukan");
+    return;
+  }
   
   const song = playlist[index];
+  
+  // Pastikan src ada
+  if (!song.src || song.src.trim() === "") {
+    console.error("Lagu tidak memiliki src:", song);
+    ttlEl.textContent = "File audio tidak ditemukan";
+    artEl.textContent = "Periksa nama file di songs.js";
+    return;
+  }
   
   // Hentikan audio lama
   audio.pause();
   audio.currentTime = 0;
   
+  // Bangun path lengkap
+  let audioPath = song.src;
+  let coverPath = song.cover;
+  
+  // Tambahkan folder hanya jika path bukan URL lengkap
+  if (typeof SONG_DIR !== 'undefined' && SONG_DIR && !audioPath.startsWith('http') && !audioPath.startsWith('/')) {
+    audioPath = SONG_DIR + audioPath;
+  }
+  if (typeof COVER_DIR !== 'undefined' && COVER_DIR && !coverPath.startsWith('http') && !coverPath.startsWith('/')) {
+    coverPath = COVER_DIR + coverPath;
+  }
+  
+  console.log("Memuat audio:", audioPath);
+  console.log("Memuat cover:", coverPath);
+  
   // Set sumber audio dan cover
-  audio.src    = SONG_DIR + song.src;
-  covImg.src   = COVER_DIR + song.cover;
-  ttlEl.textContent = song.title;
-  artEl.textContent = song.artist;
-  bg.style.backgroundImage = `url('${COVER_DIR + song.cover}')`;
+  audio.src = audioPath;
+  if (covImg) covImg.src = coverPath;
+  if (ttlEl) ttlEl.textContent = song.title;
+  if (artEl) artEl.textContent = song.artist;
+  if (bg) bg.style.backgroundImage = `url('${coverPath}')`;
   
   // Reset progress bar dan time display
-  filEl.style.width = '0%';
-  tcEl.textContent  = '0:00';
-  tdEl.textContent  = '0:00';
+  if (filEl) filEl.style.width = '0%';
+  if (tcEl) tcEl.textContent = '0:00';
+  if (tdEl) tdEl.textContent = '0:00';
   
   // Load audio
   audio.load();
@@ -90,8 +118,13 @@ function load(index, autoplay) {
       playPromise.then(() => {
         setPlaying(true);
       }).catch(error => {
-        console.log("Autoplay prevented:", error);
+        console.error("Autoplay failed:", error);
+        console.error("Audio path:", audioPath);
         setPlaying(false);
+        
+        // Tampilkan pesan error di UI
+        if (ttlEl) ttlEl.textContent = "❌ Gagal memuat audio";
+        if (artEl) artEl.textContent = "Cek: " + audioPath;
       });
     }
   } else {
@@ -137,9 +170,8 @@ function animateBars() {
   function update() {
     requestAnimationFrame(update);
     if (!analyser || !playing) {
-      // Jika tidak playing, set semua bar ke height minimal
       bars.forEach(bar => {
-        bar.style.height = '3px';
+        if (bar) bar.style.height = '3px';
       });
       return;
     }
@@ -149,7 +181,7 @@ function animateBars() {
     for (let i = 0; i < BAR_COUNT; i++) {
       const value = dataArray[i * step] || 0;
       const h = Math.max(3, (value / 255) * 40);
-      bars[i].style.height = h + 'px';
+      if (bars[i]) bars[i].style.height = h + 'px';
     }
   }
   
@@ -173,13 +205,19 @@ function renderPlaylist() {
     } else {
       numHtml = (i + 1).toString();
     }
+    
+    // Build cover path
+    let coverPath = song.cover;
+    if (typeof COVER_DIR !== 'undefined' && COVER_DIR && coverPath && !coverPath.startsWith('http') && !coverPath.startsWith('/')) {
+      coverPath = COVER_DIR + coverPath;
+    }
 
     el.innerHTML = `
       <div class="plnum">${numHtml}</div>
-      <img class="plthumb" src="${COVER_DIR + song.cover}" alt="" onerror="this.src='default-cover.jpg'">
+      <img class="plthumb" src="${coverPath || ''}" alt="" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22%3E%3Crect width=%2240%22 height=%2240%22 fill=%22%23333%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23666%22%3E%3C/text%3E%3C/svg%3E'">
       <div class="plinfo">
-        <div class="plname">${escapeHtml(song.title)}</div>
-        <div class="plartist">${escapeHtml(song.artist)}</div>
+        <div class="plname">${escapeHtml(song.title || 'Untitled')}</div>
+        <div class="plartist">${escapeHtml(song.artist || 'Unknown Artist')}</div>
       </div>
     `;
 
@@ -198,6 +236,7 @@ function renderPlaylist() {
 
 // Escape HTML untuk keamanan
 function escapeHtml(text) {
+  if (!text) return '';
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
@@ -222,14 +261,17 @@ function updateVolumeIcon(volume) {
 const playBtn = document.getElementById('bPl');
 if (playBtn) {
   playBtn.addEventListener('click', () => {
-    if (playlist.length === 0) return;
+    if (playlist.length === 0) {
+      console.log("Playlist kosong");
+      return;
+    }
     
     initAudio();
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
     }
     
-    if (!audio.src || audio.src === window.location.href) {
+    if (!audio.src || audio.src === window.location.href || audio.error) {
       load(cur, true);
       return;
     }
@@ -241,7 +283,9 @@ if (playBtn) {
       audio.play().then(() => {
         setPlaying(true);
       }).catch(error => {
-        console.log("Playback failed:", error);
+        console.error("Playback failed:", error);
+        // Coba reload lagu
+        load(cur, true);
       });
     }
   });
@@ -308,7 +352,6 @@ if (volSlider) {
     updateVolumeIcon(volume);
   });
   
-  // Initialize volume icon
   updateVolumeIcon(audio.volume);
 }
 
@@ -332,7 +375,7 @@ let updateInterval;
 audio.addEventListener('play', () => {
   if (updateInterval) clearInterval(updateInterval);
   updateInterval = setInterval(() => {
-    if (!audio.paused && audio.duration) {
+    if (!audio.paused && audio.duration && !isNaN(audio.duration)) {
       const percent = (audio.currentTime / audio.duration) * 100;
       if (filEl) filEl.style.width = percent + '%';
       if (tcEl) tcEl.textContent = fmt(audio.currentTime);
@@ -347,9 +390,9 @@ audio.addEventListener('pause', () => {
 // Update progress bar ketika waktu update
 audio.addEventListener('timeupdate', () => {
   if (audio.duration && !isNaN(audio.duration)) {
-    filEl.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
-    tcEl.textContent  = fmt(audio.currentTime);
-    tdEl.textContent  = fmt(audio.duration);
+    if (filEl) filEl.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+    if (tcEl) tcEl.textContent = fmt(audio.currentTime);
+    if (tdEl) tdEl.textContent = fmt(audio.duration);
   }
 });
 
@@ -361,16 +404,16 @@ audio.addEventListener('loadedmetadata', () => {
 // Klik progress bar untuk seek
 if (trkEl) {
   trkEl.addEventListener('click', e => {
-    if (!audio.duration) return;
+    if (!audio.duration || isNaN(audio.duration)) return;
     const rect = trkEl.getBoundingClientRect();
     const seekTo = ((e.clientX - rect.left) / rect.width) * audio.duration;
     audio.currentTime = Math.max(0, Math.min(seekTo, audio.duration));
   });
   
-  // Drag progress bar
   let isDragging = false;
   trkEl.addEventListener('mousedown', (e) => {
     isDragging = true;
+    if (!audio.duration || isNaN(audio.duration)) return;
     const rect = trkEl.getBoundingClientRect();
     const seekTo = ((e.clientX - rect.left) / rect.width) * audio.duration;
     audio.currentTime = Math.max(0, Math.min(seekTo, audio.duration));
@@ -381,7 +424,7 @@ if (trkEl) {
   });
   
   document.addEventListener('mousemove', (e) => {
-    if (isDragging && audio.duration) {
+    if (isDragging && audio.duration && !isNaN(audio.duration)) {
       const rect = trkEl.getBoundingClientRect();
       let seekTo = ((e.clientX - rect.left) / rect.width) * audio.duration;
       seekTo = Math.max(0, Math.min(seekTo, audio.duration));
@@ -392,7 +435,7 @@ if (trkEl) {
 
 // Lagu selesai → lanjut otomatis
 audio.addEventListener('ended', () => {
-  if (!looping) {
+  if (!looping && playlist.length > 0) {
     if (shuffling && playlist.length > 1) {
       let newCur;
       do {
@@ -409,31 +452,48 @@ audio.addEventListener('ended', () => {
 // Handle error saat loading audio
 audio.addEventListener('error', (e) => {
   console.error("Audio error:", e);
-  ttlEl.textContent = "Error loading track";
-  artEl.textContent = "Check file path";
+  const errorMsg = audio.error ? getAudioErrorMessage(audio.error.code) : "Unknown error";
+  console.error("Error detail:", errorMsg);
+  
+  if (ttlEl) ttlEl.textContent = "⚠️ " + errorMsg;
+  if (artEl) artEl.textContent = "File: " + (playlist[cur]?.src || "?");
 });
+
+// Helper fungsi untuk pesan error audio
+function getAudioErrorMessage(code) {
+  switch(code) {
+    case MediaError.MEDIA_ERR_ABORTED: return "Pemutaran dibatalkan";
+    case MediaError.MEDIA_ERR_NETWORK: return "Error jaringan";
+    case MediaError.MEDIA_ERR_DECODE: return "Format audio tidak didukung";
+    case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED: return "File audio tidak ditemukan atau format salah";
+    default: return "Error tidak diketahui";
+  }
+}
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-  // Space bar untuk play/pause
   if (e.code === 'Space' && document.activeElement !== playBtn) {
     e.preventDefault();
     if (playBtn) playBtn.click();
   }
-  // Left arrow untuk previous
   else if (e.code === 'ArrowLeft') {
     if (prevBtn) prevBtn.click();
   }
-  // Right arrow untuk next
   else if (e.code === 'ArrowRight') {
     if (nextBtn) nextBtn.click();
   }
 });
 
 // ── Inisialisasi awal ──
+console.log("Total playlist:", playlist.length);
+playlist.forEach((song, i) => {
+  console.log(`Lagu ${i+1}: ${song.title} - ${song.src}`);
+});
+
 if (playlist.length > 0) {
   load(cur, false);
 } else {
-  if (ttlEl) ttlEl.textContent = "Belum ada lagu";
+  if (ttlEl) ttlEl.textContent = "❌ Belum ada lagu";
   if (artEl) artEl.textContent = "Isi songs.js terlebih dahulu";
+  console.error("TIDAK ADA LAGU! Pastikan songs.js sudah diisi dengan benar");
 }
