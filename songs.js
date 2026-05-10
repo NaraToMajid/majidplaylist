@@ -23,7 +23,8 @@ const songs = [
   { title: "Best Friend", artist: "Rex Orange County", cover: "cover3.webp", src: "musik3.mp3" },
 
   // Slot kosong (tidak akan tampil di playlist karena title === "")
-  { title: "", artist: "", cover: "", src: "" },
+  { title: "Heather", artist: "Conan Gray
+", cover: "cover4.webp", src: "musik4.mp3" },
 
   { title: "", artist: "", cover: "", src: "" },
 
