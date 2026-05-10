@@ -1,4 +1,3 @@
-
 const songs = [
 
   { title: "Secret Door", artist: "Arctic Monkeys", cover: "cover1.webp", src: "musik1.mp3" },
